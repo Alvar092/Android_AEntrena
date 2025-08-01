@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-    android:background="@mipmap/fondo4"
+    android:background="@mipmap/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/b_login"
         android:backgroundTint="@color/naranjaDB"
-        android:alpha="0.80"
+        android:alpha="0.70"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:cardCornerRadius="50dp"
@@ -63,7 +63,7 @@
     
     
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button"
+        android:id="@+id/b_login"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
