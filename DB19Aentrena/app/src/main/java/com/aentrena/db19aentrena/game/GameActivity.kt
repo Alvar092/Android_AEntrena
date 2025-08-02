@@ -7,10 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.aentrena.db19aentrena.R
 import com.aentrena.db19aentrena.databinding.ActivityGameBinding
 import com.aentrena.db19aentrena.game.details.FragmentDetails
+import com.aentrena.db19aentrena.game.heroes.AdapterHeroes
 import com.aentrena.db19aentrena.game.heroes.FragmentHeroes
+import com.aentrena.db19aentrena.model.Hero
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GameActivity : AppCompatActivity() {
@@ -23,6 +27,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityGameBinding
+
     private val viewModel: GameViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +40,41 @@ class GameActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        setListeners()
+        setObservers()
+        showHeroes()
+
 
         supportFragmentManager.beginTransaction()
             .replace(binding.flGame.id, FragmentHeroes({ cambiarAFragmentDetalles()}))
             .commit()
+    }
+
+    fun setListeners() {
+        // ToDO() cambiar a detalles
+    }
+
+    fun setObservers() {
+        lifecycleScope.launch {
+            viewModel.heroesState.collect { state ->
+                when(state) {
+                    is GameViewModel.HeroesState.Error -> {
+
+                    }
+                    is GameViewModel.HeroesState.HeroSelected -> {
+                        cambiarAFragmentDetalles()
+                    }
+                    is GameViewModel.HeroesState.HeroesDownloaded -> {
+                        showHeroes()
+                    }
+                    is GameViewModel.HeroesState.HeroesUpdated -> TODO()
+                    GameViewModel.HeroesState.Idle -> {
+
+                    }
+                    GameViewModel.HeroesState.Loading -> TODO()
+                }
+            }
+        }
     }
 
     fun cambiarAFragmentDetalles() {
@@ -46,5 +82,18 @@ class GameActivity : AppCompatActivity() {
             .replace(binding.flGame.id, FragmentDetails())
             .addToBackStack(null)
             .commit()
+    }
+
+    fun obtainToken(): String {
+        return getSharedPreferences("MainActivity", MODE_PRIVATE).getString("token", "") ?: ""
+    }
+    fun showHeroes() {
+        var heroes = List<Hero>()
+        val token = obtainToken()
+        if viewModel.heroesState != GameViewModel.HeroesState.HeroesDownloaded {
+            heroes = viewModel.downloadHeroes(token)
+        }
+        return heroes
+
     }
 }

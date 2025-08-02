@@ -1,4 +1,4 @@
-package com.aentrena.db19aentrena.repositories
+package com.aentrena.db19aentrena.domain.login
 
 import com.aentrena.db19aentrena.User
 

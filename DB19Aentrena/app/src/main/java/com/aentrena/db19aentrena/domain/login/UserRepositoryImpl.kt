@@ -1,4 +1,4 @@
-package com.aentrena.db19aentrena.repositories
+package com.aentrena.db19aentrena.domain.login
 
 import com.aentrena.db19aentrena.User
 import okhttp3.OkHttpClient
@@ -27,7 +27,7 @@ class UserRepositoryImpl : UserRepository {
         return if (response.isSuccessful) {
             val token = response.body.string()
             println("Token: $token")
-            UserRepository.LoginResponse.Success()
+            UserRepository.LoginResponse.Success(token)
         } else {
             UserRepository.LoginResponse.Error(response.message)
         }

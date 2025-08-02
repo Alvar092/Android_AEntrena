@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/heroItem"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    android:background="@color/naranjaDB"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/ivHero"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        android:layout_gravity="center"
+        android:src="@drawable/ball"
+        />
+    <TextView
+        android:id="@+id/tvHeroName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:fontFamily="@font/animeace2_bld"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/azulSuper"
+        android:gravity="center"
+        />
+
+
+</LinearLayout>

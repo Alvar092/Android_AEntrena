@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.okhttp)
     implementation(libs.gson)
-    implementation(libs.kotlinx.serialization.runtime)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
     // implementation(libs.androidx.activity.ktx
     // implementation(libs.androidx.fragment.ktx)
