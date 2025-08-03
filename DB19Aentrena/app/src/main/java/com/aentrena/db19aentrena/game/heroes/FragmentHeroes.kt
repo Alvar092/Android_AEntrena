@@ -5,55 +5,119 @@ import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aentrena.db19aentrena.databinding.FragmentHeroesBinding
 import com.aentrena.db19aentrena.game.GameViewModel
 import com.aentrena.db19aentrena.model.Hero
 import kotlinx.coroutines.launch
+import com.aentrena.db19aentrena.R
 
 
-class FragmentHeroes(
-    private val onClick: (Hero) -> Unit
-): Fragment() {
+
+class FragmentHeroes: Fragment() {
 
     private val viewModel: GameViewModel by activityViewModels()
-
-    private lateinit var binding: FragmentHeroesBinding
-
-    private lateinit var adapter: AdapterHeroes
+    private lateinit var heroAdapter: HeroAdapter
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentHeroesBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View? {
+        return inflater.inflate(R.layout.fragment_heroes, container, false)
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.root.setOnClickListener {
-            onClick()
+        setupRecyclerView(view)
+        setObservers()
+
+        viewModel.heroesLiveData.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is GameViewModel.HeroesState.HeroesDownloaded -> {
+                    heroAdapter.submitList(state.heroes)
+                }
+                is GameViewModel.HeroesState.HeroesUpdated -> {
+                    heroAdapter.submitList(null)
+                    heroAdapter.submitList(state.heroes.toList())
+                }
+
+                is GameViewModel.HeroesState.Error -> {
+
+                }
+                is GameViewModel.HeroesState.HeroSelected -> {
+
+                }
+                GameViewModel.HeroesState.Idle -> {
+
+                }
+                GameViewModel.HeroesState.Loading -> {
+
+                }
+            }
+        }
+
+        if (viewModel.heroesState.value is GameViewModel.HeroesState.Idle) {
+            loadHeroes()
         }
     }
 
-    fun setHeroes(heroes: List<Hero>) {
-        adapter.submitList(heroes)
-    }
-}
+    private fun setupRecyclerView(view: View) {
+        recyclerView = view.findViewById(R.id.rvHeroes)
 
-    /*private fun setObservers() {
+        heroAdapter = HeroAdapter(viewModel)
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = heroAdapter
+        }
+    }
+
+    private fun loadHeroes() {
+        val token = requireActivity().getSharedPreferences("LoginActivity", android.content.Context.MODE_PRIVATE)
+            .getString("token", "") ?: ""
+        viewModel.downloadHeroes(token)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.notifyHeroUpdated()
+    }
+
+
+    private fun setObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.heroesState.collect { state ->
-                when(state) {
-                    is GameViewModel.HeroesState.Loading
-                    is GameViewModel.HeroesState.HeroesDownloaded // showHeroes() storeOnSharedPreferences()
-                    is GameViewModel.HeroesState.Error
-                    is GameViewModel.HeroesState.HeroSelected //goToHeroDetails() increaseCounter()
-                    is GameViewModel.HeroesState.HeroesUpdated //notificar del cambio
+                when (state) {
+                    is GameViewModel.HeroesState.Idle -> {
+
+                    }
+
+                    is GameViewModel.HeroesState.Loading -> {
+
+                    }
+                    is GameViewModel.HeroesState.HeroesDownloaded -> {
+                        heroAdapter.submitList(state.heroes)
+                    }
+                    is GameViewModel.HeroesState.Error -> {
+                        Toast.makeText(requireContext(),"Error:${state.message}", Toast.LENGTH_SHORT).show()
+                    }
+                    is GameViewModel.HeroesState.HeroSelected -> {
+
+                    } //goToHeroDetails() increaseCounter()
+                    is GameViewModel.HeroesState.HeroesUpdated -> {
+                        heroAdapter.submitList(state.heroes)
+                    }
+                }
             }
         }
     }
-} */
+}

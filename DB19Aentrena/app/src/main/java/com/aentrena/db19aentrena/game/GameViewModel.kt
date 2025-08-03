@@ -1,10 +1,11 @@
 package com.aentrena.db19aentrena.game
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.aentrena.db19aentrena.domain.hero.HeroRepository
 import com.aentrena.db19aentrena.model.Hero
-import com.aentrena.db19aentrena.presentation.LoginViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,7 @@ class GameViewModel(
         data object Idle: HeroesState()
         data object Loading: HeroesState()
         data class HeroesDownloaded(val heroes: List<Hero>): HeroesState()
-        data class HeroSelected(val hero: Hero): HeroesState()
+        data class HeroSelected(val hero: Hero, val heroList: List<Hero>): HeroesState()
         data class HeroesUpdated(val heroes: List<Hero>): HeroesState()
         data class Error(val message: String): HeroesState()
 
@@ -27,12 +28,16 @@ class GameViewModel(
 
     private val _heroesState = MutableStateFlow<HeroesState>(HeroesState.Idle)
     val heroesState: StateFlow<HeroesState> = _heroesState
+    private var cachedHeroes: List<Hero> = emptyList()
+    val heroesLiveData = _heroesState.asLiveData()
 
     fun downloadHeroes(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = heroRepository.downloadHeroes(token)
+            Log.d("GameViewModel", "Response: $response")
             when (response) {
                 is HeroRepository.DownloadHeroesResponse.Success -> {
+                    cachedHeroes = response.heroes
                     _heroesState.update {
                         HeroesState.HeroesDownloaded(response.heroes)
                     }
@@ -44,6 +49,53 @@ class GameViewModel(
                 }
 
             }
+        }
+    }
+
+    fun selectHero(hero: Hero) {
+        val currentHeroes = when (val state = _heroesState.value) {
+            is HeroesState.HeroSelected -> state.heroList
+            is HeroesState.HeroesDownloaded -> state.heroes
+            is HeroesState.HeroesUpdated -> state.heroes
+            else -> cachedHeroes
+        }
+        _heroesState.update {
+            HeroesState.HeroSelected(hero, currentHeroes)
+        }
+    }
+
+    fun notifyHeroUpdated() {
+        val currentHeroes = when (val state = _heroesState.value) {
+            is HeroesState.HeroSelected -> state.heroList
+            is HeroesState.HeroesDownloaded -> state.heroes
+            is HeroesState.HeroesUpdated -> state.heroes
+            else -> cachedHeroes
+        }
+        _heroesState.update {
+            HeroesState.HeroesUpdated(currentHeroes)
+        }
+    }
+
+    fun getSelectedHero(): Hero? {
+        return when (val currentState = heroesState.value) {
+            is HeroesState.HeroSelected -> currentState.hero
+            else -> null
+        }
+    }
+
+    fun heroesLoaded(): Boolean {
+        return cachedHeroes.isNotEmpty()
+    }
+
+    fun backToHeroesList() {
+        val currentHeroes = when (val state = _heroesState.value) {
+            is HeroesState.HeroSelected -> state.heroList
+            is HeroesState.HeroesDownloaded -> state.heroes
+            is HeroesState.HeroesUpdated -> state.heroes
+            else -> cachedHeroes
+        }
+        _heroesState.update {
+            HeroesState.HeroesDownloaded(currentHeroes)
         }
     }
 }

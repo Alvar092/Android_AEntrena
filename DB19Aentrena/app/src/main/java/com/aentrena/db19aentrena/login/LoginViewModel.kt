@@ -1,4 +1,4 @@
-package com.aentrena.db19aentrena.presentation
+package com.aentrena.db19aentrena.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -17,7 +17,7 @@ class LoginViewModel(
 
     sealed class LoginState {
         data object Idle: LoginState()
-        data object Success: LoginState()
+        data class Success(val token: String): LoginState()
         data class Error(val message: String): LoginState()
         data object Loading: LoginState()
     }
@@ -35,8 +35,9 @@ class LoginViewModel(
             when (response) {
                 is UserRepository.LoginResponse.Success -> {
                     val token = response.token
-                    _loginState.value = LoginState.Success
+                    _loginState.update { LoginState.Success(token) }
                     Log.d("LoginViewModel", "Login existoso para usuario $usuario, token: $token")
+
                 }
                 is UserRepository.LoginResponse.Error -> {
                     LoginState.Error(response.message)

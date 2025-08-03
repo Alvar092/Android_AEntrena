@@ -1,34 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/heroItem"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    android:background="@color/naranjaDB"
-    android:padding="16dp">
+    android:background="@color/naranjaDB_50"
+    android:padding="32dp"
+    android:gravity="center_vertical">
 
     <ImageView
         android:id="@+id/ivHero"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:scaleType="centerCrop"
-        android:visibility="visible"
-        android:layout_gravity="center"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ball"
         />
-    <TextView
-        android:id="@+id/tvHeroName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="name"
-        android:fontFamily="@font/animeace2_bld"
-        android:textSize="14sp"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/azulSuper"
-        android:gravity="center"
-        />
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvHeroName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="name"
+            android:fontFamily="@font/animeace2_bld"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/azulSuper"
+            android:gravity="center"
+            />
+
+        <ProgressBar
+            android:id="@+id/pbHeroHP"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:progress="100"
+            android:max="100"
+            android:progressTint="@color/verdeVida"
+            android:progressBackgroundTint="@color/azulOscuro"/>
+
+
+    </LinearLayout>
 
 </LinearLayout>

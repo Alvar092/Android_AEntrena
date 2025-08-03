@@ -10,9 +10,11 @@ import okhttp3.Request
 
 const val BASE_URL = "https://dragonball.keepcoding.education/api/"
 
-class UserRepositoryImpl : UserRepository {
+class UserRepositoryImpl(
+    private val client: OkHttpClient = OkHttpClient(), // inyectable para tests
+    private val baseUrl: String = BASE_URL
+) : UserRepository {
     override suspend fun performLoginRequest(user: User): UserRepository.LoginResponse {
-        val client = OkHttpClient()
         val url = "${BASE_URL}auth/login"
 
         val credentials = Credentials.basic(user.name, user.password)

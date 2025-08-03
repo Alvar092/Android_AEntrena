@@ -20,7 +20,7 @@
             android:name=".game.GameActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.LoginActivity"
+            android:name=".login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

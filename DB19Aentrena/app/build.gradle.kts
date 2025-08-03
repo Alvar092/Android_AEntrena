@@ -49,9 +49,13 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.glide)
     // implementation(libs.androidx.activity.ktx
     // implementation(libs.androidx.fragment.ktx)
     implementation(libs.koin.android)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockwebserver)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

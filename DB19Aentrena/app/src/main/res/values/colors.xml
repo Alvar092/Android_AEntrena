@@ -6,5 +6,6 @@
     <color name = "verde">#00FFA8</color>
     <color name = "azulOscuro">#005EFF</color>
     <color name = "naranjaDB">#FF7500</color>
-    <color name = "marron">#A56037</color>
+    <color name = "verdeVida">#00FF06</color>
+    <color name = "naranjaDB_50">#80FF5722</color>
 </resources>

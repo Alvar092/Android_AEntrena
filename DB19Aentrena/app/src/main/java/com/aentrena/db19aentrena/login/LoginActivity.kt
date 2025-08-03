@@ -1,4 +1,4 @@
-package com.aentrena.db19aentrena.presentation
+package com.aentrena.db19aentrena.login
 
 import android.os.Bundle
 import android.util.Log
@@ -86,6 +86,9 @@ class LoginActivity : AppCompatActivity() {
 
                     is LoginViewModel.LoginState.Success -> {
                         binding.pbLoading.visibility = View.GONE
+
+                        saveToken(state.token)
+
                         val user = User(binding.etUser.text.toString(), binding.etPassword.text.toString())
                         if (binding.msRememberUser?.isChecked == true) {
                             guardarEnSharedPreferences(user)
@@ -111,20 +114,28 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun guardarEnSharedPreferences(user: User) {
-        getSharedPreferences("MainActivity", MODE_PRIVATE).edit {
+        getSharedPreferences("LoginActivity", MODE_PRIVATE).edit {
             putString(UserKey, user.toJson())
         }
     }
 
     fun cargarDesdeSharedPreferences(): User {
         val user = Gson().fromJson(
-            getSharedPreferences("MainActivity", MODE_PRIVATE).getString(
+            getSharedPreferences("LoginActivity", MODE_PRIVATE).getString(
                 UserKey,
                 ""
             ), User::class.java
         )
         if (user == null) return User()
         else return user
+    }
+
+
+    fun saveToken(token:String) {
+        getSharedPreferences("LoginActivity", MODE_PRIVATE).edit {
+            putString("token", token)
+            apply()
+        }
     }
 }
 
