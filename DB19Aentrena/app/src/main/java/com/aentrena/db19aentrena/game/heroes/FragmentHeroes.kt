@@ -87,10 +87,6 @@ class FragmentHeroes: Fragment() {
         viewModel.downloadHeroes(token)
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.notifyHeroUpdated()
-    }
 
 
     private fun setObservers() {
@@ -114,7 +110,9 @@ class FragmentHeroes: Fragment() {
 
                     } //goToHeroDetails() increaseCounter()
                     is GameViewModel.HeroesState.HeroesUpdated -> {
-                        heroAdapter.submitList(state.heroes)
+                        heroAdapter.submitList(emptyList()) {
+                            heroAdapter.submitList(state.heroes.toList())
+                        }
                     }
                 }
             }

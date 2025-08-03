@@ -46,8 +46,11 @@ class FragmentDetails: Fragment() {
 
     fun bindHero(hero: Hero) {
         currentHero = hero
+
         binding.tvHeroName.text = hero.name
+
         binding.pbDetail.progress = hero.currentHealth
+
         Glide.with(this)
             .load(hero.photo)
             .into(binding.ivDetail)
@@ -65,19 +68,21 @@ class FragmentDetails: Fragment() {
         binding.bDamage.setOnClickListener {
             currentHero?.let { hero ->
                 val actualDamage = hero.reciveDamage()
-                updateHealth()
 
+                updateHealth()
 
                 Toast.makeText(requireContext(), "Daño recibido: $actualDamage", Toast.LENGTH_SHORT)
                     .show()
 
-
-                if (!hero.isAlive()) {
+                if (hero.currentHealth == 0) {
                     Toast.makeText(
                         requireContext(),
                         "${hero.name} ha muerto! :(",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    handleHeroDeath()
+
                 }
             }
         }
@@ -89,6 +94,14 @@ class FragmentDetails: Fragment() {
             }
         }
     }
+
+    private fun handleHeroDeath() {
+        binding.root.postDelayed({
+            viewModel.notifyHeroUpdated()
+            requireActivity().supportFragmentManager.popBackStack()
+        }, 2000)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

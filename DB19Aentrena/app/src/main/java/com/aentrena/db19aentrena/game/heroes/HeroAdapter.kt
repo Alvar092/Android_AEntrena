@@ -33,6 +33,7 @@ class HeroAdapter(
             nameTv.text = hero.name
 
             Log.d("HeroAdapter", "Cargando imagen para ${hero.name}: '${hero.photo}'")
+
             if (hero.photo.isNullOrEmpty()) {
                 Log.e("HeroAdapter", "URL de imagen vacía para ${hero.name}")
                 photoIv.setImageResource(R.drawable.ball)  // Imagen por defecto

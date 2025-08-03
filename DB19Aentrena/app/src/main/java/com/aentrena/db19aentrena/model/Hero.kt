@@ -17,12 +17,19 @@ data class Hero(
         return currentHealth > 0
     }
     fun heal(amount: Int = 20): Int {
-        currentHealth += amount
+
+        if (currentHealth == 0) {
+            currentHealth = currentHealth
+        } else {
+            currentHealth += 20
+        }
         return currentHealth
     }
     fun reciveDamage(amount: Int = Random.nextInt(10, 61)): Int {
-        val damage = Random.nextInt(10, 61)
-        currentHealth -= damage
-        return currentHealth
+
+        val damage = amount
+        val oldHealth = currentHealth
+        currentHealth = (currentHealth - damage).coerceAtLeast(0)
+        return oldHealth - currentHealth
     }
 }

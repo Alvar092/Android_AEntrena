@@ -71,6 +71,11 @@ class GameViewModel(
             is HeroesState.HeroesUpdated -> state.heroes
             else -> cachedHeroes
         }
+
+        currentHeroes.forEach { hero ->
+            Log.d("GameViewModel", "Hero: ${hero.name}, Health: ${hero.currentHealth}")
+        }
+
         _heroesState.update {
             HeroesState.HeroesUpdated(currentHeroes)
         }
@@ -83,19 +88,5 @@ class GameViewModel(
         }
     }
 
-    fun heroesLoaded(): Boolean {
-        return cachedHeroes.isNotEmpty()
-    }
 
-    fun backToHeroesList() {
-        val currentHeroes = when (val state = _heroesState.value) {
-            is HeroesState.HeroSelected -> state.heroList
-            is HeroesState.HeroesDownloaded -> state.heroes
-            is HeroesState.HeroesUpdated -> state.heroes
-            else -> cachedHeroes
-        }
-        _heroesState.update {
-            HeroesState.HeroesDownloaded(currentHeroes)
-        }
-    }
 }
