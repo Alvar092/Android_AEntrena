@@ -118,4 +118,12 @@ class FragmentHeroes: Fragment() {
             }
         }
     }
+
+    /* private fun setupFloatingActionButton(view: View) {
+        val fab = view.findViewById<FloatingActionButton>(R.id.fbResetHealth)
+
+        fab.setOnClickListener {
+
+        }
+    }*/
 }

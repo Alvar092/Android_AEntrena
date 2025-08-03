@@ -32,4 +32,8 @@ data class Hero(
         currentHealth = (currentHealth - damage).coerceAtLeast(0)
         return oldHealth - currentHealth
     }
+
+    fun resetHealth() {
+        currentHealth = 100
+    }
 }

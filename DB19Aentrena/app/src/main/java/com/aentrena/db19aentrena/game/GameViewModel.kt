@@ -64,6 +64,23 @@ class GameViewModel(
         }
     }
 
+    fun resetAllHeroesHealth() {
+        val currentHeroes = when (val state = _heroesState.value) {
+            is HeroesState.HeroSelected -> state.heroList
+            is HeroesState.HeroesDownloaded -> state.heroes
+            is HeroesState.HeroesUpdated -> state.heroes
+            else -> cachedHeroes
+        }
+
+        currentHeroes.forEach { hero ->
+            hero.resetHealth()
+        }
+
+        _heroesState.update {
+            HeroesState.HeroesUpdated(currentHeroes)
+        }
+    }
+
     fun notifyHeroUpdated() {
         val currentHeroes = when (val state = _heroesState.value) {
             is HeroesState.HeroSelected -> state.heroList
