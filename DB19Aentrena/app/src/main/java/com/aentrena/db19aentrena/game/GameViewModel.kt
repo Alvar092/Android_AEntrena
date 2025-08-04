@@ -65,11 +65,17 @@ class GameViewModel(
     }
 
     fun resetAllHeroesHealth() {
+        Log.d("GameViewModel", "resetAllHeroesHealth called")
+        _heroesState.update { HeroesState.Loading }
+
         val currentHeroes = when (val state = _heroesState.value) {
             is HeroesState.HeroSelected -> state.heroList
             is HeroesState.HeroesDownloaded -> state.heroes
             is HeroesState.HeroesUpdated -> state.heroes
-            else -> cachedHeroes
+            else ->{
+                Log.d("GameViewModel", "Using cachedHeroes: ${cachedHeroes.size} heroes")
+                cachedHeroes
+            }
         }
 
         currentHeroes.forEach { hero ->

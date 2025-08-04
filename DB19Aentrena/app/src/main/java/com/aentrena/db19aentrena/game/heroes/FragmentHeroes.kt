@@ -1,6 +1,7 @@
 package com.aentrena.db19aentrena.game.heroes
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -15,6 +16,7 @@ import com.aentrena.db19aentrena.game.GameViewModel
 import com.aentrena.db19aentrena.model.Hero
 import kotlinx.coroutines.launch
 import com.aentrena.db19aentrena.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 
@@ -38,9 +40,10 @@ class FragmentHeroes: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView(view)
+        setupFloatingActionButton(view)
         setObservers()
 
-        viewModel.heroesLiveData.observe(viewLifecycleOwner) { state ->
+        /* viewModel.heroesLiveData.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is GameViewModel.HeroesState.HeroesDownloaded -> {
                     heroAdapter.submitList(state.heroes)
@@ -63,7 +66,7 @@ class FragmentHeroes: Fragment() {
 
                 }
             }
-        }
+        } */
 
         if (viewModel.heroesState.value is GameViewModel.HeroesState.Idle) {
             loadHeroes()
@@ -87,7 +90,18 @@ class FragmentHeroes: Fragment() {
         viewModel.downloadHeroes(token)
     }
 
+    private fun setupFloatingActionButton(view: View) {
+        val fab = view.findViewById<FloatingActionButton>(R.id.fbResetHealth)
 
+        fab.setOnClickListener {
+            viewModel.resetAllHeroesHealth()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("FragmentHeroes","onResume called, state: ${viewModel.heroesState.value}")
+    }
 
     private fun setObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -96,34 +110,27 @@ class FragmentHeroes: Fragment() {
                     is GameViewModel.HeroesState.Idle -> {
 
                     }
-
                     is GameViewModel.HeroesState.Loading -> {
 
                     }
                     is GameViewModel.HeroesState.HeroesDownloaded -> {
                         heroAdapter.submitList(state.heroes)
                     }
-                    is GameViewModel.HeroesState.Error -> {
-                        Toast.makeText(requireContext(),"Error:${state.message}", Toast.LENGTH_SHORT).show()
-                    }
-                    is GameViewModel.HeroesState.HeroSelected -> {
-
-                    } //goToHeroDetails() increaseCounter()
                     is GameViewModel.HeroesState.HeroesUpdated -> {
                         heroAdapter.submitList(emptyList()) {
-                            heroAdapter.submitList(state.heroes.toList())
+                            heroAdapter.submitList(state.heroes)
                         }
+                    }
+                    is GameViewModel.HeroesState.HeroSelected -> {
+                        Log.d("FragmentHeroes", "HeroesUpdated: ${state.heroList.size} heroes")
+                        heroAdapter.submitList(state.heroList)
+
+                    } //goToHeroDetails() increaseCounter()
+                    is GameViewModel.HeroesState.Error -> {
+                        Toast.makeText(requireContext(),"Error:${state.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
     }
-
-    /* private fun setupFloatingActionButton(view: View) {
-        val fab = view.findViewById<FloatingActionButton>(R.id.fbResetHealth)
-
-        fab.setOnClickListener {
-
-        }
-    }*/
 }

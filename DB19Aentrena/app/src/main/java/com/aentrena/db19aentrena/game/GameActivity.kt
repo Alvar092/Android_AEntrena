@@ -53,22 +53,19 @@ class GameActivity : AppCompatActivity() {
             viewModel.heroesState.collect { state ->
                 when(state) {
                     is GameViewModel.HeroesState.Error -> {
-
                     }
                     is GameViewModel.HeroesState.HeroSelected -> {
                         var hero = viewModel.getSelectedHero()
                         showHeroDetails()
                     }
                     is GameViewModel.HeroesState.HeroesDownloaded -> {
-                        showHeroesFragment()
                     }
                     is GameViewModel.HeroesState.HeroesUpdated -> {
-
                     }
                     GameViewModel.HeroesState.Idle -> {
-
                     }
-                    GameViewModel.HeroesState.Loading -> TODO()
+                    GameViewModel.HeroesState.Loading -> {
+                    }
                 }
             }
         }
