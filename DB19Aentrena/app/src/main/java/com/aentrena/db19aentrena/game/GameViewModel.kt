@@ -48,41 +48,42 @@ class GameViewModel(
                 if (savedHeroes.isNotEmpty()) {
                     cachedHeroes = savedHeroes
                     _heroesState.update { HeroesState.HeroesDownloaded(savedHeroes) }
-                    Log.d("GameViewModel", "Updated state with saved heroes")
-                }
+                } else {
 
-                Log.d("GameViewModel", "Calling repository...")
-                when (val response = heroRepository.downloadHeroes(token)) {
-                    is HeroRepository.DownloadHeroesResponse.Success -> {
-                        val heroes = response.heroes
-                        Log.d("GameViewModel", "API SUCCESS: ${heroes.size} heroes received")
-                        heroes.forEach { hero ->
-                            Log.d("GameViewModel", "Hero: ${hero.name}, ID: ${hero.id}")
+                    // LLamada a la API
+                    when (val response = heroRepository.downloadHeroes(token)) {
+                        is HeroRepository.DownloadHeroesResponse.Success -> {
+                            val heroes = response.heroes
+                            Log.d("GameViewModel", "API SUCCESS: ${heroes.size} heroes received")
+
+                            cachedHeroes = heroes
+                            saveHeroesToPreferences(context, heroes)
+                            _heroesState.update { HeroesState.HeroesDownloaded(heroes) }
+                            Log.d("GameViewModel", "=== downloadHeroes COMPLETED ===")
                         }
 
-                        cachedHeroes = heroes
-                        saveHeroesToPreferences(context, heroes)
-                        _heroesState.update { HeroesState.HeroesDownloaded(heroes) }
-                        Log.d("GameViewModel", "=== downloadHeroes COMPLETED ===")
-                    }
-                    is HeroRepository.DownloadHeroesResponse.Error -> {
-                        Log.e("GameViewModel", "API ERROR: ${response.code} - ${response.message}")
-                        throw Exception("Error ${response.code}: ${response.message}")
+                        is HeroRepository.DownloadHeroesResponse.Error -> {
+                            Log.e(
+                                "GameViewModel",
+                                "API ERROR: ${response.code} - ${response.message}"
+                            )
+                            throw Exception("Error ${response.code}: ${response.message}")
+                        }
                     }
                 }
 
-            } catch (e: Exception) {
-                Log.e("GameViewModel", "EXCEPTION in downloadHeroes: ${e.message}", e)
-                val savedHeroes = loadHeroesFromPreferences(context)
-                if (savedHeroes.isNotEmpty()) {
-                    Log.d("GameViewModel", "Using fallback heroes: ${savedHeroes.size}")
-                    cachedHeroes = savedHeroes
-                    _heroesState.update { HeroesState.HeroesDownloaded(savedHeroes) }
-                } else {
-                    Log.e("GameViewModel", "No fallback data available")
-                    _heroesState.update { HeroesState.Error(e.message ?: "Unknown error") }
+                } catch (e: Exception) {
+                    Log.e("GameViewModel", "EXCEPTION in downloadHeroes: ${e.message}", e)
+                    val savedHeroes = loadHeroesFromPreferences(context)
+                    if (savedHeroes.isNotEmpty()) {
+                        Log.d("GameViewModel", "Using fallback heroes: ${savedHeroes.size}")
+                        cachedHeroes = savedHeroes
+                        _heroesState.update { HeroesState.HeroesDownloaded(savedHeroes) }
+                    } else {
+                        Log.e("GameViewModel", "No fallback data available")
+                        _heroesState.update { HeroesState.Error(e.message ?: "Unknown error") }
+                    }
                 }
-            }
         }
     }
 
@@ -150,10 +151,12 @@ class GameViewModel(
             val gson = Gson()
             val heroesJson = gson.toJson(heroes)
 
-            context.getSharedPreferences("LoginActivity", Context.MODE_PRIVATE)
+            val success = context.getSharedPreferences("LoginActivity", Context.MODE_PRIVATE)
                 .edit()
                 .putString("heroes_list", heroesJson)
-                .apply()
+                .commit()
+
+            Log.d("GameViewModel", "Heroes saved to prefs: $success")
         }
 
 
@@ -162,10 +165,13 @@ class GameViewModel(
             val heroesJson = context.getSharedPreferences("LoginActivity", Context.MODE_PRIVATE)
                 .getString("heroes_list", "")
 
+            Log.d("GameViewModel", "Heroes loaded from prefs: ${heroesJson?.take(200) ?: "null"}")
+
             return if (!heroesJson.isNullOrEmpty()) {
                 val type = object : TypeToken<List<Hero>>() {}.type
                 gson.fromJson(heroesJson, type) ?: emptyList()
             } else {
+                Log.d("GameViewModel", "No heroes found in prefs")
                 emptyList()
             }
         }

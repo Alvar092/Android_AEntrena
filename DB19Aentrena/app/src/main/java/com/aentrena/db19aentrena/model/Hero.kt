@@ -7,9 +7,9 @@ import kotlin.random.Random
 
 
 data class Hero(
-    val photo: String,
-    val id: String,
-    val name: String,
+    val photo: String = "",
+    val id: String = "",
+    val name: String = "",
     var currentHealth: Int = 100
 ) {
 
