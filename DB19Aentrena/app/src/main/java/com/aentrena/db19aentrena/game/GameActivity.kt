@@ -40,12 +40,10 @@ class GameActivity : AppCompatActivity() {
         }
 
         setObservers()
-        showHeroesFragment()
 
-
-        supportFragmentManager.beginTransaction()
-            .replace(binding.flGame.id, FragmentHeroes())
-            .commit()
+        if (savedInstanceState == null) {
+            showHeroesFragment()
+        }
     }
 
     fun setObservers() {

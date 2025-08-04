@@ -8,7 +8,6 @@ import com.google.gson.Gson
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okio.Okio
 
 class HeroRepositoryImpl(
     private val client: OkHttpClient = OkHttpClient(),
@@ -29,11 +28,20 @@ class HeroRepositoryImpl(
         Log.d("HeroRepository", "Request to $url with header Authorization=$credentials")
 
         val response = client.newCall(request).execute()
+        Log.d("HeroRepository", "Response code: ${response.code}")
+        Log.d("HeroRepository", "Response successful: ${response.isSuccessful}")
+
         return if (response.isSuccessful) {
-            val responseBody = response.body.string()
+            val responseBody = response.body?.string() ?: ""
+            Log.d("HeroRepository", "Response body: $responseBody")
+
             val json = Gson().fromJson(responseBody, Array<HeroDto>::class.java)
-            HeroRepository.DownloadHeroesResponse.Success(
-                json.toList().map { Hero(it.photo, it.id, it.name) })
+            Log.d("HeroRepository", "Parsed ${json.size} heroes from JSON")
+
+            val heroes = json.toList().map { Hero(it.photo, it.id, it.name) }
+            Log.d("HeroRepository", "Mapped heroes: ${heroes.map { it.name }}")
+
+            HeroRepository.DownloadHeroesResponse.Success(heroes)
         } else {
             HeroRepository.DownloadHeroesResponse.Error(response.message, response.code)
         }

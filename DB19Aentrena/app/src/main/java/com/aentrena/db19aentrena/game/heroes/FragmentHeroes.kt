@@ -87,14 +87,14 @@ class FragmentHeroes: Fragment() {
     private fun loadHeroes() {
         val token = requireActivity().getSharedPreferences("LoginActivity", android.content.Context.MODE_PRIVATE)
             .getString("token", "") ?: ""
-        viewModel.downloadHeroes(token)
+        viewModel.downloadHeroes(token, requireContext())
     }
 
     private fun setupFloatingActionButton(view: View) {
         val fab = view.findViewById<FloatingActionButton>(R.id.fbResetHealth)
 
         fab.setOnClickListener {
-            viewModel.resetAllHeroesHealth()
+            viewModel.resetAllHeroesHealth(requireContext())
         }
     }
 

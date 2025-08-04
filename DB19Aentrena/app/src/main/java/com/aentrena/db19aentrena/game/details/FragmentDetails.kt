@@ -104,6 +104,11 @@ class FragmentDetails: Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        currentHero.let {
+            viewModel.saveCurrentHeroes(requireContext())
+        }
+
         _binding = null
     }
 }
