@@ -1,10 +1,10 @@
-## Dragon Ball Fight :flame:
+## Dragon Ball Fight :fire:
 
-### ¿Qué es Dragon Ball Fight? 
+### ¿Qué es Dragon Ball Fight? 📱
 
 Es una aplicación desarrollada en Kotlin, aplicando una arquitectura MVVM(Model-View-ViewModel) para mantener una clara separación de responsabilidades entre la interfaz, la lógica de negocio y la gestión de datos. 
 
-### ¿Cómo funciona Dragon Ball Fight?
+### ¿Cómo funciona Dragon Ball Fight? ❓
 
 - Al iniciar la aplicación aparecerá una pantalla de login donde tendras que introducir las siguientes credenciales: 
 
@@ -26,7 +26,7 @@ Password: asdfgh
 
 · Se emplea un repositorio como capa intermedia entre la lógica de dominio y la fuente de datos remota. 
 
-### Frameworks y librerias 
+### Frameworks y librerias 🧰
 
 - Android Jetpack: gestión del ciclo de vida y estado de la UI con ViewModel y LiveData, acceso seguro a las vistas del layout con ViewBinding. 
 
